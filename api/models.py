@@ -1,5 +1,5 @@
 import jwt
-from datatime import datetime, timedelta
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -62,22 +62,22 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     is_active = models.BooleanField(default=True)
     is_mentor = models.BooleanField(default=False)
-    is_student = models.BooleanField(defult=False)
+    is_student = models.BooleanField(default=False)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = []
 
     class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = ('users')
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
 
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'
@@ -110,8 +110,8 @@ class Task(BaseModel):
     description = models.TextField()
 
     class Meta:
-        verbose_name = _('task')
-        verbose_name_plural = _('tasks')
+        verbose_name = 'task'
+        verbose_name_plural = 'tasks'
 
     def __str__(self):
         return self.name
@@ -119,10 +119,11 @@ class Task(BaseModel):
 
 class LearningPath(BaseModel):
     title = models.CharField(max_length=100)
+    student = models.OneToOneField(User, on_delete = models.CASCADE)
 
     class Meta:
-        verbose_name = _('learning path')
-        verbose_name_plural = _('learning paths')
+        verbose_name = 'LearningPath'
+        verbose_name_plural = 'LearningPaths'
 
     def __str__(self):
         return self.title
@@ -140,7 +141,8 @@ class TaskSubmission(BaseModel):
     is_reviewed = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = _('Task Submission')
+        verbose_name = 'TaskSubmission'
+        verbose_name_plural = 'TaskSubmissions'
 
     def __str__(self):
         return self.task_id
