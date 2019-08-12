@@ -5,11 +5,13 @@ from rest_framework.views import APIView
 from .serializers import (
     MenteeRegistrationSerializer, MentorRegistrationSerializer, LoginSerializer
 )
+from .renderers import UserJSONRenderer
 
 
 # Registration Views
 
 class MentorRegistrationAPIView(APIView):
+    renderer_classes = (UserJSONRenderer,)
     serializer_class = MentorRegistrationSerializer
 
     def post(self, request):
@@ -22,6 +24,7 @@ class MentorRegistrationAPIView(APIView):
 
 
 class MenteerRegistrationAPIView(APIView):
+    renderer_classes = (UserJSONRenderer,)
     serializer_class = MenteeRegistrationSerializer
 
     def post(self, request):
@@ -35,6 +38,7 @@ class MenteerRegistrationAPIView(APIView):
 
 class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
+    renderer_classes = (UserJSONRenderer,)
     serializer_class = LoginSerializer
 
     def post(self, request):
