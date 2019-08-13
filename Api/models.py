@@ -104,3 +104,24 @@ class User(AbstractBaseUser, TimeStampModel, PermissionsMixin):
         verbose_name = 'user'
         verbose_name_plural = 'users'
 
+
+class Task(models.Model):
+    name = models.CharField(max_length=30)
+    description = models.TextField()
+
+class Learning_Path(models.Model):
+    title = models.CharField(max_length=30)
+    mentee = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+
+class TaskSubmission(models.Model):
+    learning_path = models.ForeignKey(TaskSubmission, on_delete=models.CASCADE, related_name='tasks')
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    submission = models.CharField(max_length=100)
+    feedback = models.TextField()
+    is_submitted = models.BooleanField(default=False)
+    is_reviewed = models.BooleanField(default=False)
+
+    
+
+
