@@ -70,7 +70,7 @@ class User(AbstractBaseUser, TimeStampModel, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = UserManager()
 
@@ -93,9 +93,10 @@ class User(AbstractBaseUser, TimeStampModel, PermissionsMixin):
         return f'{self.first_name} {self.last_name}'
 
     def get_short_name(self):
-        first_name_initial = self.first_name[0].upper()
-        last_name_initial = self.last_name[0].upper()
-        return first_name_initial+last_name_initial
+        # first_name_initial = self.first_name[0].upper()
+        # last_name_initial = self.last_name[0].upper()
+        # return first_name_initial+last_name_initial
+        return self.first_name
 
     def __str__(self):
         return self.get_full_name()
@@ -108,20 +109,29 @@ class User(AbstractBaseUser, TimeStampModel, PermissionsMixin):
 class Task(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField()
+    mentor = models.ForeignKey(User, on_delete=models.CASCADE)
 
-class Learning_Path(models.Model):
+    def __str__(self):
+        return self.name
+
+
+class LearningPath(models.Model):
     title = models.CharField(max_length=30)
-    mentee = models.ForeignKey(User, on_delete=models.CASCADE)
+    mentee = models.OneToOneField(User, on_delete=models.CASCADE)
+    mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='paths')
     
+    def __str__(self):
+        return self.title
+
 
 class TaskSubmission(models.Model):
-    learning_path = models.ForeignKey(TaskSubmission, on_delete=models.CASCADE, related_name='tasks')
+    path = models.ForeignKey(
+        LearningPath, on_delete=models.CASCADE, related_name='tasks')
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     submission = models.CharField(max_length=100)
     feedback = models.TextField()
     is_submitted = models.BooleanField(default=False)
     is_reviewed = models.BooleanField(default=False)
 
-    
-
-
+    def __str__(self):
+        return self.task_id
