@@ -128,7 +128,7 @@ STATIC_URL = '/static/'
 
 # rest-framework
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'WrkTime.exceptions.core_exception_handler',
+    'EXCEPTION_HANDLER': 'Wrktime.exceptions.core_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'Api.backends.JWTAuthentication',
