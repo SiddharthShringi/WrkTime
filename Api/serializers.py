@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import User
-
+from .models import User, Task
 
 
 class MentorRegistrationSerializer(serializers.Serializer):
@@ -18,7 +17,6 @@ class MentorRegistrationSerializer(serializers.Serializer):
         model = User
         fields = ['first_name', 'last_name', 'email', 'password', 'token']
 
-    
     def create(self, validated_data):
         return User.objects.create_mentor(**validated_data)
 
@@ -37,10 +35,8 @@ class MenteeRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['first_name', 'last_name', 'email', 'password', 'token']
 
-    
     def create(self, validated_data):
         return User.objects.create_mentee(**validated_data)
-
 
 
 class LoginSerializer(serializers.Serializer):
@@ -53,19 +49,22 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password', None)
 
         if email is None:
-            raise serializers.ValidationError('An email address is required to login.')
+            raise serializers.ValidationError(
+                'An email address is required to login.')
 
         if password is None:
-            raise serializers.ValidationError('A password is required to login.')
-
+            raise serializers.ValidationError(
+                'A password is required to login.')
 
         user = authenticate(username=email, password=password)
 
         if user is None:
-            raise serializers.ValidationError('A user with this email and password does not exist.')
+            raise serializers.ValidationError(
+                'A user with this email and password does not exist.')
 
         if not user.is_active:
-            raise serializers.ValidationError('This user has been deactivated.')
+            raise serializers.ValidationError(
+                'This user has been deactivated.')
 
         return {
             'email': user.email,
@@ -74,5 +73,22 @@ class LoginSerializer(serializers.Serializer):
         }
 
 
+class TaskSerializer(serializers.ModelSerializer):
+    mentor = serializers.ReadOnlyField(source='user.email')
 
-    
+    class Meta:
+        model = Task
+        fields = ['id', 'name', 'description', 'mentor']
+
+    def create(self, validated_data):
+        return Task.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get(
+            'description', instance.description)
+
+        instance.save()
+        return instance
+
+
