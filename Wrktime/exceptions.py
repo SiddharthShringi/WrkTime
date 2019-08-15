@@ -1,19 +1,23 @@
 from rest_framework.views import exception_handler
 
-
 def core_exception_handler(exc, context):
+
     response = exception_handler(exc, context)
     handlers = {
         'ValidationError': _handle_generic_error
     }
-
+    # This is how we identify the type of the current exception. We will use
+    # this in a moment to see whether we should handle this exception or let
+    # Django REST Framework do its thing.
     exception_class = exc.__class__.__name__
 
     if exception_class in handlers:
+        # If this exception is one that we can handle, handle it. Otherwise,
+        # return the response generated earlier by the default exception 
+        # handler.
         return handlers[exception_class](exc, context, response)
 
     return response
-
 
 def _handle_generic_error(exc, context, response):
     # This is the most straightforward exception handler we can create.
