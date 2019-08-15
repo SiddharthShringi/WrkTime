@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import User, Task
+from .models import User, Task, LearningPath
 
 
 class MentorRegistrationSerializer(serializers.Serializer):
@@ -74,11 +74,12 @@ class LoginSerializer(serializers.Serializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    mentor = serializers.ReadOnlyField(source='user.email')
+    mentor = serializers.ReadOnlyField(source='mentor.email')
 
     class Meta:
         model = Task
         fields = ['id', 'name', 'description', 'mentor']
+        read_only_fields = ['mentor']
 
     def create(self, validated_data):
         return Task.objects.create(**validated_data)
@@ -92,3 +93,18 @@ class TaskSerializer(serializers.ModelSerializer):
         return instance
 
 
+class LearningPathSerializer(serializers.ModelSerializer):
+    mentor = serializers.ReadOnlyField(source='mentor.email')
+
+    class Meta:
+        model = LearningPath
+        fields = ['id', 'title', 'mentee', 'mentor']
+
+    def create(self, validated_data):
+        return LearningPath.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.mentee = validated_data.get('mentee', instance.mentee)
+        instance.save()
+        return instance
