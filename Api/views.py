@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -53,7 +54,7 @@ class LoginAPIView(APIView):
 
 
 
-class TaskAPIView(APIView):
+class TaskList(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = TaskSerializer
     queryset = Task.objects.all()
@@ -69,3 +70,35 @@ class TaskAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(mentor=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TaskDetail(APIView):
+    "Retrieve, Update and Delete instance."
+    permission_classes = (IsAuthenticated,)
+    serializer_class = TaskSerializer
+
+    def get_object(self, pk):
+        try:
+            return Task.objects.get(pk=pk)
+        except Task.DoesNotExist:
+            return Http404
+
+    def get(self, request, pk, format=None):
+        task = self.get_object(pk)
+        serializer = self.serializer_class(task)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk, format=None):
+        task = Task.objects.get(pk=pk)
+        serializer = TaskSerializer(task, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(mentor=request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk, format=None):
+        task = self.get_object(pk)
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    
