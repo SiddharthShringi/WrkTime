@@ -1,12 +1,13 @@
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from .serializers import (
-    MenteeRegistrationSerializer, MentorRegistrationSerializer, LoginSerializer, TaskSerializer
+    MenteeRegistrationSerializer, MentorRegistrationSerializer, LoginSerializer, TaskSerializer, LearningPathSerializer
 )
-from .models import Task
+from .models import Task, LearningPath
 from .renderers import UserJSONRenderer
 
 
@@ -53,7 +54,6 @@ class LoginAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 class TaskList(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = TaskSerializer
@@ -90,7 +90,7 @@ class TaskDetail(APIView):
 
     def put(self, request, pk, format=None):
         task = Task.objects.get(pk=pk)
-        serializer = TaskSerializer(task, data=request.data)
+        serializer = self.serializer_class(task, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(mentor=request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -101,4 +101,46 @@ class TaskDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-    
+class LearningPathList(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LearningPathSerializer
+
+    def get(self, request):
+        paths = LearningPath.objects.all()
+        serializer = self.serializer_class(paths, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(mentor=request.user)
+        return Response(serializer.data, status=status.HTTP_201_OK)
+
+
+class LearningPathDetail(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LearningPathSerializer
+
+    def get_object(self, pk):
+        try:
+            LearningPath.objects.get(pk=pk)
+        except LearningPath.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        path = self.get_object(pk)
+        serializer = self.serializer_class(path)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk, format=None):
+        path = self.get_object(pk)
+        serializer = self.serializer_class(path, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(mentor=request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk, format=None):
+        path = self.get_object(pk)
+        path.delete()
+        return Response(status=status.HTTP_204_OK)
