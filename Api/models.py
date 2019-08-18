@@ -126,10 +126,10 @@ class LearningPath(models.Model):
 
 class TaskSubmission(models.Model):
     path = models.ForeignKey(
-        LearningPath, on_delete=models.CASCADE, related_name='tasks')
+        LearningPath, on_delete=models.CASCADE, related_name='task_submissions')
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
-    submission = models.CharField(max_length=100)
-    feedback = models.TextField()
+    submission = models.CharField(max_length=100, blank=True)
+    feedback = models.TextField(blank=True)
     is_submitted = models.BooleanField(default=False)
     is_reviewed = models.BooleanField(default=False)
 
@@ -140,5 +140,9 @@ class TaskSubmission(models.Model):
 # to do task
 # 1. Make user serializer
 # 2. Write views for accessing users who are mentee.
+
+
+# Serializer
+
 
 
