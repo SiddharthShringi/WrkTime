@@ -134,7 +134,7 @@ class TaskSubmission(models.Model):
     is_reviewed = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.task_id
+        return self.task_id.name
 
 
 # to do task
