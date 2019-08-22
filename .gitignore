@@ -7,15 +7,15 @@ db.sqlite3
 .vscode
 
 # dependencies
-frontend/node_modules
+*.node_modules
 frontend/.pnp
 .pnp.js
 
 # testing
-frontend/coverage
+/coverage
 
 # production
-frontend/build
+/build
 
 # misc
 .DS_Store
