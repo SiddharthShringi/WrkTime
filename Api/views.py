@@ -38,7 +38,7 @@ class MenteerRegistrationAPIView(APIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
+# Login view for both mentor and mentee
 class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
     renderer_classes = (UserJSONRenderer,)
@@ -54,6 +54,7 @@ class LoginAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# Create and read the list of the tasks.
 class TaskList(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = TaskSerializer
@@ -71,7 +72,7 @@ class TaskList(APIView):
         serializer.save(mentor=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
+# get a task object, update and delete view.
 class TaskDetail(APIView):
     "Retrieve, Update and Delete instance."
     permission_classes = (IsAuthenticated,)
@@ -81,7 +82,7 @@ class TaskDetail(APIView):
         try:
             return Task.objects.get(pk=pk)
         except Task.DoesNotExist:
-            return Http404
+            raise Http404
 
     def get(self, request, pk, format=None):
         task = self.get_object(pk)
@@ -101,6 +102,7 @@ class TaskDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Get the list of all learning paths and create one learning path.
 class LearningPathList(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = LearningPathSerializer
@@ -118,13 +120,14 @@ class LearningPathList(APIView):
         return Response(serializer.data, status=status.HTTP_201_OK)
 
 
+# Get the learning path object, update or delete view.
 class LearningPathDetail(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = LearningPathSerializer
 
     def get_object(self, pk):
         try:
-            LearningPath.objects.get(pk=pk)
+            return LearningPath.objects.get(pk=pk)
         except LearningPath.DoesNotExist:
             raise Http404
 
@@ -144,3 +147,7 @@ class LearningPathDetail(APIView):
         path = self.get_object(pk)
         path.delete()
         return Response(status=status.HTTP_204_OK)
+
+
+
+
