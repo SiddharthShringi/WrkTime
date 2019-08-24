@@ -8,8 +8,8 @@ class SignUpForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      first_name: '',
-      last_name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       errors: {}
@@ -24,10 +24,10 @@ class SignUpForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault()
-    var { first_name, last_name, email, password } = this.state;
+    var { firstName, lastName, email, password } = this.state;
     var user = {
-      first_name,
-      last_name,
+      firstName,
+      lastName,
       email,
       password,
     }
@@ -38,25 +38,33 @@ class SignUpForm extends Component {
     const { error } = this.state
     return (
       <div className="signupForm">
-        <from>
+        <form onSubmit={this.handleSubmit}>
           <h5>Sign Up</h5>
           <div>
+            <label htmlFor="firstName">First Name</label>
+            <input type="text" id="firstName" onChange={this.handleChange} />
+          </div>
+          <div>
+            <label htmlFor="lastName">Last Name</label>
+            <input type="text" id="lastName" onChange={this.handleChange} />
+          </div>
+          <div>
             <label htmlFor="email">Email</label>
-            <input type="text" id="email" onChange={} />
+            <input type="text" id="email" onChange={this.handleChange} />
           </div>
           <div>
             <label htmlFor="password">Password</label>
-            <input type="password" id="password" onChange={} />
+            <input type="password" id="password" onChange={this.handleChange} />
           </div>
           <button>Signup</button>
 
-          <div className="errors">
-            { error.first_name ? <p>first_name: error</p> : null }
-            { error.last_name ? <p>last_name: error</p> : null }
+          {/* <div className="errors">
+            { error.firstName ? <p>first_name: error</p> : null }
+            { error.lastName ? <p>last_name: error</p> : null }
             { error.email ? <p>email: error</p> : null }
             { error.password ? <p>password: error</p> : null }
-          </div>
-        </from>
+          </div> */}
+        </form>
       </div>
     )
 
