@@ -144,4 +144,5 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'Api.backends.JWTAuthentication',
     ),
+    
 }
