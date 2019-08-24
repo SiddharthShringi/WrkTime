@@ -18,8 +18,11 @@ class MentorRegistrationAPIView(APIView):
     serializer_class = MentorRegistrationSerializer
 
     def post(self, request):
+        print(request.data, 'data')
         user = request.data.get('user', {})
+        print(user, 'user')
         serializer = self.serializer_class(data=user)
+        print(serializer.is_valid(), 'is_valid')
         serializer.is_valid(raise_exception=True)
         serializer.save()
 

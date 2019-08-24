@@ -60,8 +60,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, TimeStampModel, PermissionsMixin):
-    first_name = models.CharField(max_length=30, blank=True)
-    last_name = models.CharField(max_length=30, blank=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
     is_mentor = models.BooleanField(default=False)
