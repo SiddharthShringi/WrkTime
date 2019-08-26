@@ -16,6 +16,7 @@ from .renderers import UserJSONRenderer
 class MentorRegistrationAPIView(APIView):
     renderer_classes = (UserJSONRenderer,)
     serializer_class = MentorRegistrationSerializer
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         print(request.data, 'data')
@@ -49,10 +50,10 @@ class LoginAPIView(APIView):
 
     def post(self, request):
         user = request.data.get('user', {})
+        print(user, 'login_user')
 
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
